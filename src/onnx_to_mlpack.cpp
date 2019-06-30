@@ -6,11 +6,12 @@
 #include <memory>
 #include <string>
 
-#include "modelParser.cpp"
+#include "model_parser.hpp"
 
 using namespace onnx;
 using namespace mlpack;
 using namespace mlpack::ann;
+using namespace std;
 
 LayerTypes<> getLayer(NodeProto& node, map<string, double>& dimParams)
 {
@@ -222,6 +223,7 @@ void extractWeights2(GraphProto& graph, arma::mat& weightMatrix)
     }
 }
 
+// now redundant, to be removed later
 void extractWeights(GraphProto& graph, arma::mat& weightMatrix)
 {
     auto weights = graph.initializer();// change the auto later
@@ -272,7 +274,7 @@ FFN<> generateModel(GraphProto& graph)
     for (NodeProto node:graph.node())
     {
         map<string, double> dimParams;
-        if (node.op_type() == "Add" || node.op_type() == "Identity")
+        if (node.op_type() == "Add" || node.op_type() == "Identity" || node.op_type() == "Reshape")
             continue;
         
         if (!(node.op_type() == "Add" || node.op_type() == "Relu" || node.op_type() == "Softmax"))// more to added later or an array to be created
@@ -295,7 +297,9 @@ FFN<> generateModel(GraphProto& graph)
 int main()
 {
     ModelProto model;
-    std::ifstream in("onnx_linear_model.onnx", std::ios_base::binary);
+    // check the input and output width and height of image for convolution
+    std::ifstream in("onnx_conv_model.onnx", std::ios_base::binary);
+    //std::ifstream in("onnx_linear_model.onnx", std::ios_base::binary);
     model.ParseFromIstream(&in);
     in.close();
 
@@ -303,11 +307,11 @@ int main()
 
     FFN<> ffnModel = generateModel(graph);
     //arma::mat temp;
-    extractWeights2(graph, ffnModel.Parameters());
+    //extractWeights2(graph, ffnModel.Parameters());
     //temp.print();
-    ffnModel.Parameters().print();
+    //ffnModel.Parameters().print();
     //data::Save("linear_mlpack_model.xml", "linear_model", model);
     std::cout<<model.graph().node().size()<<"\n";
-    cout << "Dims of weights: " << graph.initializer().size() << "\n";
+    std::cout << "Dims of weights: " << graph.initializer().size() << "\n";
 
 }
