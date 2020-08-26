@@ -27,11 +27,12 @@
 
 using namespace mlpack;
 using namespace ann;
+using namespace std;
 
 /**
  * Get a torch model with the given layer types and details corresponding to
  * the mlpack model
- * 
+ *
  * @param layerTypes The vector containing all the layer names
  * @param layers The vector containing the LayerTypes<> object
  * associated with each layer of the mlpack model
@@ -151,9 +152,9 @@ torch::nn::Sequential transferLayers(std::vector<std::string>& layerTypes,
 
 /**
  * Transfer the weights of the mlpack model to the torch model.
- * 
+ *
  * @param mlpackParams Weights of the mlpack model
- * @param torchParams Weiights of the torch model
+ * @param torchParams Weights of the torch model
  */
 void transferParameters(arma::mat& mlpackParams, std::vector<
                         at::Tensor> torchParams)
@@ -170,7 +171,7 @@ void transferParameters(arma::mat& mlpackParams, std::vector<
     std::cout << origSize << '\n' << torchParam.sizes() << "\n\n";
 
     torchParam = torchParam.view({-1, 1});
-    
+
     auto paramAccessor  = torchParam.accessor<float, 2>();
 
     // std::cout << paramAccessor.sizes() << '\n';
@@ -184,6 +185,7 @@ void transferParameters(arma::mat& mlpackParams, std::vector<
       //   std::cout << "i= " << i << " j= " << j << " mlpackParamItr= " << mlpackParamItr << " value= " << paramAccessor[i][j] << '\n';
       // }
       paramAccessor[i][0] = mlpackParams(mlpackParamItr++, 0);
+      std::cout << "Hi" << endl;
       std::cout << "i= " << i << " mlpackParamItr= " << mlpackParamItr << " value= " << paramAccessor[i][0] << '\n';
     }
 
@@ -200,7 +202,7 @@ void transferParameters(arma::mat& mlpackParams, std::vector<
   //   std::cout << origSize << "\n\n";
 
   //   torchParam = torchParam.view({-1, 1});
-    
+
   //   auto paramAccessor  = torchParam.accessor<float, 2>();
 
   //   // std::cout << paramAccessor.sizes() << '\n';
@@ -226,7 +228,7 @@ void transferParameters(arma::mat& mlpackParams, std::vector<
 /**
  * Get a torch model with the layer types, details
  * and weights corresponding to the given mlpack model.
- * 
+ *
  * @param mlpackModel The mlpack model that is to be converted.
  * @return A sequential torch model corresponding to the given
  * mlpack model with the weights also transferred.
@@ -246,7 +248,7 @@ torch::nn::Sequential& convert(FFN<>& mlpackModel) // remove reference
 
 /**
  * Save the converted torch model to the given location
- * 
+ *
  * @param inFilename The path to the mlpack model
  * @param outFileName The path to the torch model
  */

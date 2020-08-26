@@ -34,7 +34,7 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
 
   /*
    * Return the name of the given layer of type Linear as a map.
-   * 
+   *
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
@@ -60,7 +60,7 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
 
   /*
    * Return the name of the given layer of type Linear as a map.
-   * 
+   *
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
@@ -74,35 +74,36 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
 
   /*
    * Return the name of the given layer of type Linear as a map.
-   * 
+   *
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
   std::unordered_map<std::string, double> LayerString(BatchNorm<>* layer) const
   {
     std::unordered_map<std::string, double> values;
-    // Values inaccessible, needs to be fixed
-
-    // values["eps"] = layer->eps();
+    values["size"] = layer->InputSize();
+    values["eps"] = layer->Epsilon();
+    values["average"] = layer->Average();
+    values["momentum"] = layer->Momentum();
     return values;
   }
 
   /*
    * Return the name of the given layer of type Linear as a map.
-   * 
+   *
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
   std::unordered_map<std::string, double> LayerString(Constant<>* layer) const
   {
     std::unordered_map<std::string, double> values;
-    // values["outsize"] = layer->OutputSize();
+    values["outsize"] = layer->OutSize();
     return values;
   }
 
   /*
    * Return the name of the given layer of type Linear as a map.
-   * 
+   *
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
@@ -126,7 +127,7 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
 
   /*
    * Return the name of the given layer of type Linear as a map.
-   * 
+   *
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
@@ -140,7 +141,7 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
 
   /*
    * Return the name of the given layer of type Linear as a map.
-   * 
+   *
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
@@ -154,7 +155,7 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
 
   /*
    * Return the name of the given layer of type Linear as a map.
-   * 
+   *
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
@@ -168,7 +169,7 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
 
   /*
    * Return the name of the given layer of type Linear as a map.
-   * 
+   *
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
@@ -182,14 +183,14 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
     values["dw"] = layer->StrideWidth();
     values["dh"] = layer->StrideHeight();
     values["floor"] = layer->Floor();
-    values["inputwidth"] = layer->InputWidth(); // Might be removed
-    values["inputheight"] = layer->InputHeight();// Might be removed
+    values["inputwidth"] = layer->InputWidth();
+    values["inputheight"] = layer->InputHeight();
     return values;
   }
 
   /*
    * Return the name of the given layer of type Linear as a map.
-   * 
+   *
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
@@ -203,14 +204,14 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
     values["dw"] = layer->StrideWidth();
     values["dh"] = layer->StrideHeight();
     values["floor"] = layer->Floor();
-    values["inputwidth"] = layer->InputWidth(); // Might be removed
-    values["inputheight"] = layer->InputHeight();// Might be removed
+    values["inputwidth"] = layer->InputWidth();
+    values["inputheight"] = layer->InputHeight();
     return values;
   }
 
   /*
    * Return the name of the given layer of type Linear as a map.
-   * 
+   *
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
@@ -223,7 +224,7 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
 
   /*
    * Return the name of the given layer of type Linear as a map.
-   * 
+   *
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
@@ -236,8 +237,10 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
     values["kh"] = layer->KernelHeight();
     values["dw"] = layer->StrideWidth();
     values["dh"] = layer->StrideHeight();
-    values["padw"] = layer->PadWidth();
-    values["padh"] = layer->PadHeight();
+    values["padwl"] = layer->PadWLeft();
+    values["padwr"] = layer->PadWRight();
+    values["padht"] = layer->PadHTop();
+    values["padhb"] = layer->PadHBottom();
     values["inputwidth"] = layer->InputWidth();
     values["inputheight"] = layer->InputHeight();
     return values;
@@ -245,7 +248,7 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
 
   /*
    * Return the name of the layer of specified type as a string.
-   * 
+   *
    * @param Given layer of any type.
    * @return A string declaring that the layer is unsupported.
    */
