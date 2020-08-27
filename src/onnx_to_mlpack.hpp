@@ -354,7 +354,7 @@ void convert(string& inFileName, string& outFileName)
 {
   ModelProto onnxModel;
   std::ifstream in(inFileName, std::ios_base::binary);
-  model.ParseFromIstream(&in);
+  onnxModel.ParseFromIstream(&in);
   in.close();
   GraphProto graph = onnxModel.graph();
   FFN<> ffnModel = generateModel(graph);

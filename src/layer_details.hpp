@@ -243,6 +243,8 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
     values["padhb"] = layer->PadHBottom();
     values["inputwidth"] = layer->InputWidth();
     values["inputheight"] = layer->InputHeight();
+    //values["outputwidth"] = layer->OutputWidth();
+    //values["outputheight"] = layer->OutputHeight();
     return values;
   }
 
