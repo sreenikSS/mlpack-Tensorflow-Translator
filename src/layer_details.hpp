@@ -83,8 +83,10 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
     std::unordered_map<std::string, double> values;
     values["size"] = layer->InputSize();
     values["eps"] = layer->Epsilon();
-    values["average"] = layer->Average();
-    values["momentum"] = layer->Momentum();
+
+    // Include commented parts after next mlpack release.
+    //values["average"] = layer->Average();
+    //values["momentum"] = layer->Momentum();
     return values;
   }
 

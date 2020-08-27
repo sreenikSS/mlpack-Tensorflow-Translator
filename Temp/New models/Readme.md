@@ -1,7 +1,9 @@
-## Testing area for new models
-Onnx is not too consistent with its conversions not to mention its coherency across frameworks. I have developed the translator keeping in mind only a few models that I have created. 
+# Testing area for new models
 
-Hence, contributions are welcome in the form of (somewhat pretrained) models, preferably convolutional. Supported model frameworks are:
+Onnx is not too consistent with its conversions not to mention its coherency across frameworks. I have developed the translator keeping in mind only a few models that I have created.
+
+Hence, contributions are welcome in the form of (somewhat pre-trained) models, preferably convolutional. Supported model frameworks are:
+
 - Tensorflow
 - Keras
 - Onnx

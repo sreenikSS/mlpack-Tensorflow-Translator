@@ -1,4 +1,4 @@
-#include <onnx/onnx_pb.h>
+#include "onnx_pb.h"
 #include <fstream>
 #include <iostream>
 #include <memory>
