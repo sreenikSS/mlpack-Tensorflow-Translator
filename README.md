@@ -109,7 +109,7 @@ to train neural networks.
 
 ---
 
-## Some notes regarding future development tasks:
+## Some notes regarding future development tasks
 
 ### mlpack layers that need some modification
 
