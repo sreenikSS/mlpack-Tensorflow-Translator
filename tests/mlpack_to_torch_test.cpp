@@ -227,7 +227,7 @@ void paramTest()
 
 int main()
 {
-    std::string inFile = "examples/mlpack_linear_model.xml";
+    std::string inFile = "mlpack_linear_model.xml";
     std::string outFile = "torch_linear_model.pt";
     FFN<> mlpackModel;
     data::Load(inFile, "mlpack_model", mlpackModel);

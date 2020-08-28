@@ -1,7 +1,25 @@
 # mlpack-TensorFlow Translator
 
+<div align="center">
+<img src="docs/imgs/translator.jpeg" height="25%" width="25%">
+<p></p>
+</div>
+
+## Dependencies
+
 - **Primary Dependencies : boost, armadillo, ensmallen, mlpack**
 - C++11 is the minimum version required for cpp.
+
+## Functionality
+
+This library can do two types of conversions currently.
+
+- Converting mlpack models to torch (See example in mlpack_to_torch_test.cpp file)
+- Converting onnx models to mlpack (See example in onnx_to_mlpack_test.cpp file)
+
+This library also includes a header file only implementation of a standalone
+model parser that can parse json files containing user-defined model details
+to train neural networks.
 
 ## Installing primary dependencies on MacOS
 
@@ -13,7 +31,7 @@
 
 ---
 
-## How to run the test_converter.cpp on MacOS
+## How to run the mlpack_to_torch_test.cpp file on MacOS
 
 - First install libtorch.
 
@@ -24,30 +42,34 @@
 - Next, compile the file using the following command.
 
   ```bash
-  g++ src/test_converter.cpp -o test_converter -lboost_serialization -lboost_program_options -larmadillo -lmlpack -lc10 -ltorch_cpu -std=c++14 -stdlib=libc++ -I /usr/local/Cellar/libtorch/1.6.0_1/include/torch/csrc/api/include
+  g++ tests/mlpack_to_torch_test.cpp -o tests/test_converter -lboost_serialization -lboost_program_options -larmadillo -lmlpack -lc10 -ltorch_cpu -std=c++14 -stdlib=libc++ -I /usr/local/Cellar/libtorch/1.6.0_1/include/torch/csrc/api/include -I src
   ```
 
 - Now, run the executable produced and log the output to a text file.
 
   ```bash
-  ./test_converter >test_converter_output.txt
+  ./tests/test_converter >tests/test_converter_output.txt
   ```
 
-## How to run the test_converter.cpp on Linux
+## How to run the mlpack_to_torch_test.cpp file on Linux
 
 - Install the same dependencies as above and compile using the command below.
 
   ```bash
-  g++ -o test_converter src/test_converter.cpp -I /usr/include/torch/csrc/api/include -lboost_serialization -lboost_program_options -larmadillo -lopenblas -fopenmp -lmlpack -ltorch -lc10 -ltorch_cpu
+  g++ -o tests/test_converter tests/mlpack_to_torch_test.cpp -I src -I /usr/include/torch/csrc/api/include -lboost_serialization -lboost_program_options -larmadillo -lopenblas -fopenmp -lmlpack -ltorch -lc10 -ltorch_cpu
   ```
 
 - Now, run the executable produced and log the output to a text file.
 
   ```bash
-  ./test_converter >test_converter_output.txt
+  ./tests/test_converter >tests/test_converter_output.txt
   ```
 
-## Compiling onnx_to_mlpack.hpp on MacOS
+## Compiling the onnx_to_mlpack.hpp file on MacOS
+
+The only purpose of compiling the header file is to see whether the
+functionality in it compiles correctly without giving any errors. Compiling this
+using the command below will produce a GCC precompiled header file named onnx_to_mlpack.hpp.gch
 
 - First install protobuf.
 
@@ -70,6 +92,15 @@
 
   ```bash
   g++ src/onnx_to_mlpack.hpp -I /Users/anjishnu/Downloads/onnx/.setuptools-cmake-build/ -DONNX_ML=1 -I /usr/local/bin/protoc -std=c++14 -stdlib=libc++ -lboost_serialization -lboost_program_options -larmadillo -lmlpack
+  ```
+
+## How to run the onnx_to_mlpack_test.cpp file on MacOS
+
+- This file just #includes onnx_to_mlpack.hpp and has an empty main function.
+- Compiling this file with this command gives a linker error presently.
+
+  ```bash
+  g++ tests/onnx_to_mlpack_test.cpp -I /Users/anjishnu/Downloads/onnx/.setuptools-cmake-build/ -DONNX_ML=1 -I /usr/local/bin/protoc -std=c++14 -stdlib=libc++ -lboost_serialization -lboost_program_options -larmadillo -lmlpack -I src
   ```
 
 ---

@@ -199,7 +199,8 @@ LayerTypes<> getLayer(const NodeProto& node, string layerType,
  * of the ONNX model
  * @return The number of nodes in each layer
  */
-std::vector<int> findWeightDims(auto& weights)
+std::vector<int> findWeightDims
+(const ::google::protobuf::RepeatedPtrField< ::onnx::TensorProto>& weights)
 {
   std::vector<int> dims;
   auto itr = std::begin(weights);

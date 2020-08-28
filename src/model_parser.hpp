@@ -2,7 +2,7 @@
  * @file model_parser.hpp
  * @author Sreenik Seal
  *
- * Implementation of a parser to parse json files containing 
+ * Implementation of a parser to parse json files containing
  * user-defined model details to train neural networks
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -59,19 +59,19 @@ class Dataset
     Dataset();
     /**
       * Create the Dataset object
-      * 
+      *
       * Pass the training input dataset and its corresponding output dataset
-      * 
+      *
       * @param trainX Training input
       * @param trainY Correct output/labels for the training input data
       */
     Dataset(arma::mat& trainX, arma::mat& trainY);
     /**
       * Create the Dataset object
-      * 
+      *
       * Pass the training input dataset, validation input dataset and their
       * respective output datasets
-      * 
+      *
       * @param trainX Training input
       * @param trainY Correct ouput/labels for the training input data
       * @param validX Validation input
@@ -81,18 +81,18 @@ class Dataset
             arma::mat& validX, arma::mat& validY);
     /**
       * Set the values of the training dataset and its corresponding output
-      * 
+      *
       * Pass the training input dataset and its corresponding output dataset
-      * 
+      *
       * @param trainX Training input
       * @param trainY Correct output/labels for the training input data
       */
     void setTrainSet(arma::mat& trainX, arma::mat& trainY);
     /**
       * Set the values of the validation dataset and its corresponding output
-      * 
+      *
       * Pass the validation input dataset and its corresponding output dataset
-      * 
+      *
       * @param validX Validation input
       * @param validY Correct output/labels for the validation input data
       */
@@ -118,17 +118,17 @@ class Dataset
 /**
  * Print the given stl map where the keys are of type string and
  * values are of type double
- * 
+ *
  * @param params The map to be printed
  */
 void printMap(std::map<std::string, double> params);
 
 /**
- * Update the values of a given stl map with that of another map 
+ * Update the values of a given stl map with that of another map
  * corresponding to the keys that are common
- * 
+ *
  * Keys are of type string and values are of type double
- * 
+ *
  * @param origParams The map whose values will be updated
  * @param newParams The map whose values will be used to update origParams
  */
@@ -160,7 +160,7 @@ double accuracy(arma::Row<size_t> predLabels, const arma::mat& realY);
 /**
  * Train the feedforward network with the given training data and test it
  * against the given validation data for a given number of cycles
- * 
+ *
  * @tparam OptimizerType Type of optimizer to use to train the model
  * @tparam LossType Type of loss function to use to evaluate the network
  * @tparam InitType Type of initialization to initialize the network parameter
@@ -177,9 +177,9 @@ void trainModel(OptimizerType optimizer, FFN<LossType, InitType> model,
 
 
 /**
- * Create the feedforward network model with the given loss function, 
+ * Create the feedforward network model with the given loss function,
  * initialization type, optimizer and network architecture
- * 
+ *
  * @tparam LossType Type of loss function to use to evaluate the network
  * @tparam InitType Type of initialization to initialize the network parameters
  * @param loss Loss function used to evaluate the network
@@ -202,7 +202,7 @@ void createModel(LossType& loss,
 /**
  * Determine the loss function to use to evaluate the network given a string
  * that stores the loss function type
- * 
+ *
  * @tparam InitType Type of initialization to initialize the network parameters
  * @param init Initializer to initialize the network
  * @param lossType Type of loss function to use to evaluate the network
@@ -225,7 +225,7 @@ void getLossType(InitType& init,
 /**
  * Determine the initialization type for initializing the network given a
  * string that stores the initialization type
- * 
+ *
  * @param initType Type of initialization to initialize the network parameters
  * @param lossType Type of loss function to use to evaluate the network
  * @param initParams Parameters to use to define the initializer
@@ -248,30 +248,30 @@ void getInitType(std::string& initType, std::string& lossType,
 /**
  * Determine the layer type to be added to a feedforward network given a
  * string containing the type and a map containing the parameters
- * 
+ *
  * @param layerType Type of layer that is to be defined
  * @param layerParams Map containing the parameters of the layer to be defined
- * @return A LayerTypes<> object that is of the given type and is 
+ * @return A LayerTypes<> object that is of the given type and is
  * initialized by the given parameters
  */
 LayerTypes<> getNetworkReference(std::string& layerType, std::map<std::string,
                                  double>& layerParams);
 
 /**
- * Traverse the given property tree and determine the loss function, 
+ * Traverse the given property tree and determine the loss function,
  * initializer, optimizer and network architecture as given by the user
- * 
+ *
  * @param tree Property tree to use to extract the network features
  * @param dataset The Dataset object that contains the training and validation
  * data
  * @param inSize The input size of the first layer
- */ 
+ */
 void traverseModel(const boost::property_tree::ptree& tree,
                    Dataset& dataset, double& inSize);
 
 /**
  * Create a property tree from the given json file
- * 
+ *
  * @param fileName Path to the json file from which the network
  * properties would be loaded
  * @param dataset The Dataset object that contains the training and validation
@@ -281,8 +281,8 @@ void traverseModel(const boost::property_tree::ptree& tree,
 boost::property_tree::ptree loadProperties(std::string& fileName,
                                            Dataset& dataset, double inSize);
 
-/** The final implementation of this file would not have a main method. This is 
- * merely to ease testing. The following include statement can hence be 
+/** The final implementation of this file would not have a main method. This is
+ * merely to ease testing. The following include statement can hence be
  * removed later
 */
 

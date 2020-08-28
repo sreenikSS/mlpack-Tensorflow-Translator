@@ -2,3 +2,7 @@
 .vscode
 test_converter_output.txt
 test_converter
+*.hpp.gch
+*.gch.tmp
+.markdownlint.json
+.DS_Store
