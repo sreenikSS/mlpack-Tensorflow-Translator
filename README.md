@@ -12,6 +12,11 @@
 
 ## Functionality
 
+The name of the repository is a misnomer as none of the functionalities have
+anything to do with Tensorflow directly. However, it allows
+to convert onnx models to mlpack and any Tensorflow model can be
+converted into onnx using [onnx-tensorflow](https://github.com/onnx/onnx-tensorflow).
+
 This library can do two types of conversions currently.
 
 - Converting mlpack models to torch (See example in mlpack_to_torch_test.cpp file)
@@ -21,7 +26,9 @@ This library also includes a header file only implementation of a standalone
 model parser that can parse json files containing user-defined model details
 to train neural networks.
 
-## Installing primary dependencies on MacOS
+## Running the tests/examples
+
+### Installing primary dependencies on MacOS
 
 - Using Homebrew
 
@@ -31,7 +38,7 @@ to train neural networks.
 
 ---
 
-## How to run the mlpack_to_torch_test.cpp file on MacOS
+### How to run the mlpack_to_torch_test.cpp file on MacOS
 
 - First install libtorch.
 
@@ -51,7 +58,7 @@ to train neural networks.
   ./tests/test_converter >tests/test_converter_output.txt
   ```
 
-## How to run the mlpack_to_torch_test.cpp file on Linux
+### How to run the mlpack_to_torch_test.cpp file on Linux
 
 - Install the same dependencies as above and compile using the command below.
 
@@ -65,11 +72,11 @@ to train neural networks.
   ./tests/test_converter >tests/test_converter_output.txt
   ```
 
-## Compiling the onnx_to_mlpack.hpp file on MacOS
+### How to run the onnx_to_mlpack_test.cpp file on MacOS
 
-The only purpose of compiling the header file is to see whether the
-functionality in it compiles correctly without giving any errors. Compiling this
-using the command below will produce a GCC precompiled header file named onnx_to_mlpack.hpp.gch
+- This file just #includes onnx_to_mlpack.hpp and has an empty main function to
+  test if there are any compilation errors on including the onnx_to_mlpack.hpp
+  file.
 
 - First install protobuf.
 
@@ -77,7 +84,7 @@ using the command below will produce a GCC precompiled header file named onnx_to
   brew install protobuf
   ```
 
-- Then, install onnx in any directory
+- Then, install onnx in any easily accessible directory
   (here, everything is done in the Downloads folder).
 
   ```bash
@@ -88,33 +95,30 @@ using the command below will produce a GCC precompiled header file named onnx_to
   python setup.py install
   ```
 
-- Next, compile the file using the following command.
+- Next, compile this file with the following command.
 
   ```bash
-  g++ src/onnx_to_mlpack.hpp -I /Users/anjishnu/Downloads/onnx/.setuptools-cmake-build/ -DONNX_ML=1 -I /usr/local/bin/protoc -std=c++14 -stdlib=libc++ -lboost_serialization -lboost_program_options -larmadillo -lmlpack
+  g++ -w tests/onnx_to_mlpack_test.cpp -L /Users/<username>/Downloads/onnx/.setuptools-cmake-build/ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -L /usr/local/bin/ -std=c++14 -stdlib=libc++ -lboost_serialization -lboost_program_options -larmadillo -lmlpack -I src -I /Users/<username>/Downloads/onnx/.setuptools-cmake-build/ -lonnx_proto -lprotobuf -lpthread -o tests/onnx_to_mlpack_test
   ```
 
-## How to run the onnx_to_mlpack_test.cpp file on MacOS
-
-- This file just #includes onnx_to_mlpack.hpp and has an empty main function.
-- Compiling this file with this command gives a linker error presently.
+- Run the executable produced using the command below.
 
   ```bash
-  g++ tests/onnx_to_mlpack_test.cpp -I /Users/anjishnu/Downloads/onnx/.setuptools-cmake-build/ -DONNX_ML=1 -I /usr/local/bin/protoc -std=c++14 -stdlib=libc++ -lboost_serialization -lboost_program_options -larmadillo -lmlpack -I src
+  ./tests/onnx_to_mlpack_test
   ```
 
 ---
 
-Some notes regarding future development tasks:
+## Some notes regarding future development tasks:
 
-## mlpack layers that need some modification
+### mlpack layers that need some modification
 
 - [x] BatchNorm - Missing argument `momentum` ✅
 - [ ] MaxPool - Missing argument `pads` ❌
 - [ ] Convolution - Missing argument `group` ❌
 - [ ] Selu (elu) - Argument `lambda` (called gamma in onnx) is not modifiable ❌
 
-## mlpack layers that need to be added
+### mlpack layers that need to be added
 
 - [x] Softmax - We have LogSoftmax and not softmax but many of the popular
    pre-trained models in the onnx zoo use softmax ✅

@@ -1,8 +1,14 @@
+# IDE specific files.
 .ipynb_checkpoints
 .vscode
+.DS_Store
+.markdownlint.json
+
+# Output files produced from tests.
 test_converter_output.txt
 test_converter
-*.hpp.gch
-*.gch.tmp
-.markdownlint.json
-.DS_Store
+onnx_to_mlpack_Test
+
+# if anyone tries to compile the header files in src.
+*.gch
+*.tmp
