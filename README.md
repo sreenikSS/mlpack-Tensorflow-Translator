@@ -49,13 +49,13 @@ to train neural networks.
 - Next, compile the file using the following command.
 
   ```bash
-  g++ tests/mlpack_to_torch_test.cpp -o tests/test_converter -lboost_serialization -lboost_program_options -larmadillo -lmlpack -lc10 -ltorch_cpu -std=c++14 -stdlib=libc++ -I /usr/local/Cellar/libtorch/1.6.0_1/include/torch/csrc/api/include -I src
+  g++ -w tests/mlpack_to_torch_test.cpp -o tests/mlpack_to_torch_test -lboost_serialization -lboost_program_options -larmadillo -lmlpack -lc10 -ltorch_cpu -std=c++14 -stdlib=libc++ -I /usr/local/Cellar/libtorch/1.6.0_1/include/torch/csrc/api/include -I src
   ```
 
 - Now, run the executable produced and log the output to a text file.
 
   ```bash
-  ./tests/test_converter >tests/test_converter_output.txt
+  ./tests/mlpack_to_torch_test >tests/mlpack_to_torch_test_output.txt
   ```
 
 ### How to run the mlpack_to_torch_test.cpp file on Linux
@@ -63,13 +63,13 @@ to train neural networks.
 - Install the same dependencies as above and compile using the command below.
 
   ```bash
-  g++ -o tests/test_converter tests/mlpack_to_torch_test.cpp -I src -I /usr/include/torch/csrc/api/include -lboost_serialization -lboost_program_options -larmadillo -lopenblas -fopenmp -lmlpack -ltorch -lc10 -ltorch_cpu
+  g++ -o tests/mlpack_to_torch_test -w tests/mlpack_to_torch_test.cpp -I src -I /usr/include/torch/csrc/api/include -lboost_serialization -lboost_program_options -larmadillo -lopenblas -fopenmp -lmlpack -ltorch -lc10 -ltorch_cpu
   ```
 
 - Now, run the executable produced and log the output to a text file.
 
   ```bash
-  ./tests/test_converter >tests/test_converter_output.txt
+  ./tests/mlpack_to_torch_test >tests/mlpack_to_torch_test_output.txt
   ```
 
 ### How to run the onnx_to_mlpack_test.cpp file on MacOS

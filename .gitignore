@@ -1,14 +1,15 @@
-# IDE specific files.
+# Ignore IDE specific files.
 .ipynb_checkpoints
 .vscode
 .DS_Store
 .markdownlint.json
 
-# Output files produced from tests.
-test_converter_output.txt
-test_converter
-onnx_to_mlpack_Test
+# Ignore output files produced from tests.
+onnx_to_mlpack_test
+mlpack_to_torch_test
+mlpack_to_torch_test_output.txt
 
-# if anyone tries to compile the header files in src.
+# If someone tries to compile the header files in src,
+# ignore the precompiled headers created.
 *.gch
 *.tmp
