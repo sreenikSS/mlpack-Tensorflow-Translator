@@ -26,7 +26,7 @@ This library also includes a header file only implementation of a standalone
 model parser that can parse json files containing user-defined model details
 to train neural networks.
 
-## Running the tests/examples
+## Running the test cases
 
 ### Installing primary dependencies on MacOS
 
