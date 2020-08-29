@@ -2,7 +2,7 @@
  * @file model_parser_impl.hpp
  * @author Sreenik Seal
  *
- * Implementation of a parser to parse json files containing 
+ * Implementation of a parser to parse json files containing
  * user-defined model details to train neural networks
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -15,11 +15,15 @@
 #define MLPACK_METHODS_ANN_MODEL_PARSER_IMPL_HPP
 
 #include "model_parser.hpp"
+#include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
 
 using namespace mlpack;
 using namespace ann;
 
-Dataset::Dataset(){}
+Dataset::Dataset()
+{
+  // Nothing to do here.
+}
 
 Dataset::Dataset(arma::mat& trainX, arma::mat& trainY)
 {
@@ -134,28 +138,30 @@ void trainModel(OptimizerType optimizer, FFN<LossType, InitType> model,
   arma::mat validY = dataset.getValidY();
   for (int i = 1; i <= cycles; i++)
   {
+    /*
     // Uncomment and modify this part for solving a regression problem
 
-    // model.Train(trainX, trainY, optimizer);
-    // arma::mat predOut;
-    // model.Predict(trainX, predOut);
-    // predOut.transform([](double val) { return roundf(val);});
-    // double trainAccuracy = 0;
-    // for (int j=0; j < trainY.n_cols; j++)
-    // {
-    //     trainAccuracy += ( (int) predOut[j] == (int) trainY[j]);
-    // }
-    // trainAccuracy /= (double) trainY.n_cols;
-    // model.Predict(validX, predOut);
-    // predOut.transform([](double val) { return roundf(val);});
-    // double validAccuracy = 0;
-    // for (int j=0; j < validY.n_cols; j++)
-    // {
-    //     validAccuracy += ( (int) predOut[j] == (int) validY[j]);
-    // }
-    // validAccuracy /= (double) validY.n_cols;
-    // Log::Info << "Cycle: " << i << " Training accuracy: " << trainAccuracy <<
-    //     " Validation accuracy: " << validAccuracy << "\n";
+    model.Train(trainX, trainY, optimizer);
+    arma::mat predOut;
+    model.Predict(trainX, predOut);
+    predOut.transform([](double val) { return roundf(val);});
+    double trainAccuracy = 0;
+    for (int j=0; j < trainY.n_cols; j++)
+    {
+        trainAccuracy += ( (int) predOut[j] == (int) trainY[j]);
+    }
+    trainAccuracy /= (double) trainY.n_cols;
+    model.Predict(validX, predOut);
+    predOut.transform([](double val) { return roundf(val);});
+    double validAccuracy = 0;
+    for (int j=0; j < validY.n_cols; j++)
+    {
+        validAccuracy += ( (int) predOut[j] == (int) validY[j]);
+    }
+    validAccuracy /= (double) validY.n_cols;
+    Log::Info << "Cycle: " << i << " Training accuracy: " << trainAccuracy <<
+        " Validation accuracy: " << validAccuracy << "\n";
+    */
 
     // Train neural network. If this is the first iteration, weights are
     // random, using current values as starting point otherwise.
@@ -599,12 +605,14 @@ void getInitType(std::string& initType, std::string& lossType,
                                   lossParams, optimizerParams, layers,
                                   dataset);
   }
-  // else if (initType == "kathirvalavakumar_subavathi")
-  // {
-  //   getLossType<KathirvalavakumarSubavathiInitialization>(lossType,
-  //                                                        optimizerType,
-  //                                                        optimizerParams);
-  // }
+  /*
+  else if (initType == "kathirvalavakumar_subavathi")
+  {
+    getLossType<KathirvalavakumarSubavathiInitialization>(lossType,
+                                                         optimizerType,
+                                                         optimizerParams);
+  }
+  */
   else if (initType == "lecun_normal")
   {
     LecunNormalInitialization init;
@@ -661,6 +669,17 @@ void getInitType(std::string& initType, std::string& lossType,
   }
 }
 
+// Simple mapping of string padding types to double.
+std::string decodePadType(double val)
+{
+  if (val==0)
+    return "None";
+  else if (val==1)
+    return "Valid";
+  else
+    return "Same";
+}
+
 LayerTypes<> getNetworkReference(std::string& layerType,
                                  std::map<std::string, double>& layerParams)
 {
@@ -681,13 +700,15 @@ LayerTypes<> getNetworkReference(std::string& layerType,
     origParams["inputheight"] = 0;
     origParams["dilationw"] = 1;
     origParams["dilationh"] = 1;
+    origParams["paddingtype"] = 0; // None = 0 , Valid = 1, Same = 2
     updateParams(origParams, layerParams);
+    std::string padding = decodePadType(origParams["paddingtype"]);
     layer = new AtrousConvolution<>(origParams["insize"],
         origParams["outsize"], origParams["kw"], origParams["kh"],
         origParams["dw"], origParams["dh"], origParams["padw"],
         origParams["padh"], origParams["inputwidth"],
         origParams["inputheight"], origParams["dilationw"],
-        origParams["dilationh"]);
+        origParams["dilationh"], padding);
   }
   else if (layerType == "alphadropout")
   {
@@ -699,10 +720,14 @@ LayerTypes<> getNetworkReference(std::string& layerType,
   }
   else if (layerType == "batchnorm")
   {
+    // Add the commented part after next mlpack release.
     origParams["size"] = NAN;
-    origParams["eps"] = 1e-8;;
+    origParams["eps"] = 1e-8;
+    //origParams["average"] = 1;
+    //origParams["momentum"] = 0.1;
     updateParams(origParams, layerParams);
-    layer = new BatchNorm<>(origParams["size"], origParams["eps"]);
+    layer = new BatchNorm<>(origParams["size"], origParams["eps"]);//,
+        //origParams["average"], origParams["momentum"]);
   }
   else if (layerType == "constant")
   {
@@ -722,16 +747,18 @@ LayerTypes<> getNetworkReference(std::string& layerType,
     origParams["padh"] = 0;
     origParams["inputwidth"] = 0;
     origParams["inputheight"] = 0;
+    origParams["paddingtype"] = 0; // None = 0 , Valid = 1, Same = 2
     updateParams(origParams, layerParams);
+    std::string padding = decodePadType(origParams["paddingtype"]);
     layer = new Convolution<>(origParams["insize"], origParams["outsize"],
         origParams["kw"], origParams["kh"], origParams["dw"],
         origParams["dh"], origParams["padw"], origParams["padh"],
-        origParams["inputwidth"], origParams["inputheight"]);
+        origParams["inputwidth"], origParams["inputheight"], padding);
   }
   else if (layerType == "dropconnect")
   {
-    origParams["insize"];
-    origParams["outsize"];
+    origParams["insize"] = NAN;
+    origParams["outsize"] = NAN;
     origParams["ratio"] = 0.5;
     updateParams(origParams, layerParams);
     layer = new DropConnect<>(origParams["insize"], origParams["outsize"],
@@ -745,21 +772,28 @@ LayerTypes<> getNetworkReference(std::string& layerType,
   }
   else if (layerType == "layernorm")
   {
-    layer = new LayerNorm<>();
+    origParams["size"] = NAN;
+    origParams["eps"] = 1e-8;
+    updateParams(origParams, layerParams);
+    layer = new LayerNorm<>(origParams["size"], origParams["eps"]);
   }
   else if (layerType == "linearnobias")
   {
+    NoRegularizer regularizer;
     origParams["insize"] = NAN;
     origParams["outsize"] = NAN;
     updateParams(origParams, layerParams);
-    layer = new LinearNoBias<>(origParams["insize"], origParams["outsize"]);
+    layer = new LinearNoBias<>(origParams["insize"], origParams["outsize"],
+        regularizer);
   }
   else if (layerType == "linear")
   {
+    NoRegularizer regularizer;
     origParams["insize"] = NAN;
     origParams["outsize"] = NAN;
     updateParams(origParams, layerParams);
-    layer = new Linear<>(origParams["insize"], origParams["outsize"]);
+    layer = new Linear<>(origParams["insize"], origParams["outsize"],
+        regularizer);
   }
   else if (layerType == "maxpooling")
   {
@@ -801,12 +835,17 @@ LayerTypes<> getNetworkReference(std::string& layerType,
     origParams["padh"] = 0;
     origParams["inputwidth"] = 0;
     origParams["inputheight"] = 0;
+    origParams["outputwidth"] = 0;
+    origParams["outputheight"] = 0;
+    origParams["paddingtype"] = 0; // None = 0 , Valid = 1, Same = 2
     updateParams(origParams, layerParams);
+    std::string padding = decodePadType(origParams["paddingtype"]);
     layer = new TransposedConvolution<>(origParams["insize"],
         origParams["outsize"], origParams["kw"], origParams["kh"],
         origParams["dw"], origParams["dh"], origParams["padw"],
         origParams["padh"], origParams["inputwidth"],
-        origParams["inputheight"]);
+        origParams["inputheight"], origParams["outputwidth"],
+        origParams["outputheight"], padding);
   }
   else if (layerType == "identity")
   {
@@ -816,30 +855,19 @@ LayerTypes<> getNetworkReference(std::string& layerType,
   {
     layer = new ReLULayer<>();
   }
-  // else if (layerType == "softplus")
-  // {
-  // }
-  // else if (layerType == "softsign")
-  // {
-  //   // layer = SoftsignFunction;
-  // }
-  // else if (layerType == "swish")
-  // {
-  //   // layer = new Swish
-  // }
   else if (layerType == "tanh")
   {
     layer = new TanHLayer<>();
   }
   else if (layerType == "elu")
   {
-    origParams["alpha"];
+    origParams["alpha"] = NAN;
     updateParams(origParams, layerParams);
     layer = new ELU<>(origParams["alpha"]);
   }
   else if (layerType == "selu")
   {
-    layer = new SELU();
+    layer = new SELU;
   }
   else if (layerType == "hardtanh")
   {
@@ -863,7 +891,11 @@ LayerTypes<> getNetworkReference(std::string& layerType,
   {
     layer = new SigmoidLayer<>();
   }
-  else if (layerType == "softmax" || layerType == "logsoftmax")
+  else if (layerType == "softmax")
+  {
+    layer = new Softmax<>();
+  }
+  else if (layerType == "logsoftmax")
   {
     layer = new LogSoftMax<>();
   }
@@ -871,6 +903,7 @@ LayerTypes<> getNetworkReference(std::string& layerType,
   {
     Log::Fatal << "Invalid layer type : " << layerType;
   }
+
   return layer;
 }
 

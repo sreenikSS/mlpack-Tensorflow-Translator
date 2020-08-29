@@ -1,4 +1,4 @@
-#include <onnx/onnx_pb.h>
+#include "onnx_pb.h"
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -16,7 +16,7 @@ map<string, double> storedParams;
 /**
  * Get the mlpack layer associated with the given layer type
  * instantiated with the given parameters
- * 
+ *
  * @param node The ONNX node containing the layer attributes
  * @param dimParams The map containing information about the
  * dimensions of the layer
@@ -45,7 +45,8 @@ LayerTypes<> getLayer(const NodeProto& node, string layerType,
       {"Relu", "relu"},
       {"Selu", "selu"},
       {"Sigmoid", "sigmoid"},
-      //{"Softmax", "logsoftmax"},// Needs implementation in mlpack
+      {"Softmax", "softmax"},
+      {"LogSoftMax", "logsoftmax"},
       //{"Softsign", "softsign"},// Needs to be defined in the parser
       {"Tanh", "tanh"}
   };
@@ -54,7 +55,7 @@ LayerTypes<> getLayer(const NodeProto& node, string layerType,
   mappedNames["Conv"] = {
       {"kernel_shape", {"kh", "kw"}},
       {"pads", {"padh", "padw"}},
-      {"strides", {"dh", "dw"}}  
+      {"strides", {"dh", "dw"}}
   };
 
   mappedNames["Dropout"] = {
@@ -74,7 +75,7 @@ LayerTypes<> getLayer(const NodeProto& node, string layerType,
   mappedNames["ConvTranspose"] = {
       {"kernel_shape", {"kh", "kw"}},
       {"pads", {"padh", "padw"}},
-      {"strides", {"dh", "dw"}}  
+      {"strides", {"dh", "dw"}}
   };
 
   mappedNames["Elu"] = {
@@ -83,7 +84,7 @@ LayerTypes<> getLayer(const NodeProto& node, string layerType,
 
   mappedNames["MaxPool"] = {
       {"kernel_shape", {"kh", "kw"}},
-      {"strides", {"dh", "dw"}}  
+      {"strides", {"dh", "dw"}}
   };// support for 'pads' missing in mlpack
 
   mappedNames["Identity"];
@@ -102,7 +103,7 @@ LayerTypes<> getLayer(const NodeProto& node, string layerType,
 
   mappedNames["Softsign"];// not yet implemented in the parser
 
-  mappedNames["Tanh"]; 
+  mappedNames["Tanh"];
 
   map<string, vector<string>> layer = mappedNames[layerType];
   /*stores the attributes which can be calculated
@@ -124,7 +125,7 @@ LayerTypes<> getLayer(const NodeProto& node, string layerType,
       continue;
     }
     else if (attrName == "auto_pad")
-    {  
+    {
       // P = ((S-1)*W-S+F)/2
       skippedAttributes.push_back("auto_pad_" + attribute.s());
     }
@@ -148,9 +149,9 @@ LayerTypes<> getLayer(const NodeProto& node, string layerType,
       {
         mappedParams[*itr] = attribute.floats()[i];
       }
-    }        
+    }
   }
-  
+
   map<string, double>::iterator itr;
   for (itr = dimParams.begin(); itr != dimParams.end(); ++itr)
   {
@@ -164,7 +165,7 @@ LayerTypes<> getLayer(const NodeProto& node, string layerType,
       mappedParams["padw"] = (int) ((mappedParams["inputwidth"] *
       (mappedParams["dw"] - 1) - mappedParams["dw"] +
       mappedParams["kw"] + 1) / 2);
-      
+
       mappedParams["padh"] = (int) ((mappedParams["inputheight"] *
       (mappedParams["dh"] - 1) - mappedParams["dh"] +
       mappedParams["kh"] + 1) / 2);
@@ -193,12 +194,13 @@ LayerTypes<> getLayer(const NodeProto& node, string layerType,
 /**
  * Get the input size of each layer and the output size of the last layer in
  * a vector
- * 
+ *
  * @param weights The data structure containing the weights and biases
  * of the ONNX model
  * @return The number of nodes in each layer
  */
-std::vector<int> findWeightDims(auto& weights)
+std::vector<int> findWeightDims
+(const ::google::protobuf::RepeatedPtrField< ::onnx::TensorProto>& weights)
 {
   std::vector<int> dims;
   auto itr = std::begin(weights);
@@ -226,7 +228,7 @@ std::vector<int> findWeightDims(auto& weights)
 
 /**
  * Transfer the weights of the ONNX model to the mlpack model
- * 
+ *
  * @param graph The ONNX graph containing all the weights and layer details
  * @param weightMatrix The matrix containing the mlpack model's weights
  */
@@ -254,7 +256,7 @@ void extractWeights(GraphProto& graph, arma::mat& weightMatrix)
   for(TensorProto weight:weights)
   {
     if (weight.dims().size() == 0)
-      continue; 
+      continue;
     if (weight.has_raw_data())
     {
       std::string rawData = weight.raw_data();
@@ -281,7 +283,7 @@ void extractWeights(GraphProto& graph, arma::mat& weightMatrix)
 /**
  * Get the mlpack equivalent model of a given ONNX model without
  * the transfer of weights
- * 
+ *
  * @param graph The ONNX graph containing all the layer details
  * @return An mlpack FFN model corresponding to the ONNX model passed
  */
@@ -323,7 +325,7 @@ FFN<> generateModel(GraphProto& graph)
 
     if (std::find(skipLayers.begin(), skipLayers.end(), nodeType) != skipLayers.end())
       continue;
-    
+
     if (std::find(dimensionalLayers.begin(), dimensionalLayers.end(), nodeType) != dimensionalLayers.end())
     {
       dimParams["insize"] = *itr;
@@ -344,7 +346,7 @@ FFN<> generateModel(GraphProto& graph)
 
 /**
  * Convert the ONNX model in a given path to an mlpack model and save it
- * 
+ *
  * @param inFileName The path to the ONNX model including the extension
  * @param outFileName The path to the mlpack model including
  * the desired extension
@@ -353,7 +355,7 @@ void convert(string& inFileName, string& outFileName)
 {
   ModelProto onnxModel;
   std::ifstream in(inFileName, std::ios_base::binary);
-  model.ParseFromIstream(&in);
+  onnxModel.ParseFromIstream(&in);
   in.close();
   GraphProto graph = onnxModel.graph();
   FFN<> ffnModel = generateModel(graph);
@@ -364,7 +366,7 @@ void convert(string& inFileName, string& outFileName)
 /**
  * Convert the ONNX non-convolutionl model in a given path to
  * an mlpack model and save it
- * 
+ *
  * @param inFileName The path to the ONNX model
  * @param outFileName The path to the mlpack model
  */
@@ -376,7 +378,7 @@ void convertModel(string inFileName, string outFileName)
 /**
  * Convert the ONNX convolutional model in a given path to an
  * mlpack model and save it given the input image dimension
- * 
+ *
  * @param inFileName The path to the ONNX model
  * @param outFileName The path to the mlpack model
  * @param imHeight The height of each input image
