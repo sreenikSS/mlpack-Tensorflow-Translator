@@ -180,23 +180,40 @@ void transferParameters(arma::mat& mlpackParams, std::vector<
   {
     int totalParam = 1;
     auto origSize = torchParam.sizes();
-    torchParam = torchParam.t();
-    torchParam = torchParam.view({-1, 1});
-    auto paramAccessor  = torchParam.accessor<float, 2>();
-    for (int i = 0; i < paramAccessor.size(0); ++i)
+    int dimLen = torchParam.sizes().size();
+    if (dimLen == 1)
     {
-      /* // #TODO:
-      for (int j = 0; j < paramAccessor.size(1); ++j)
-      {
-        paramAccessor[i][j] = mlpackParams(mlpackParamItr++, 0);
-        std::cout << "i= " << i << " j= " << j << " mlpackParamItr= " << mlpackParamItr << " value= " << paramAccessor[i][j] << '\n';
-      }
-      */
-      paramAccessor[i][0] = mlpackParams(mlpackParamItr++, 0);
-      std::cout << "i= " << i << " mlpackParamItr= " << mlpackParamItr <<
-          " value= " << paramAccessor[i][0] << '\n';
+      for (int i = 0; i < torchParam.size(0); ++i)
+        torchParam.index_put_({i}, mlpackParams(mlpackParamItr++, 0));
     }
-    torchParam = torchParam.view(origSize);
+    else if (dimLen == 2)
+    {
+      torchParam = torchParam.t();
+      for (int i = 0; i < torchParam.size(0); ++i)
+      {
+        for (int j = 0; j < torchParam.size(1); ++j)
+        {
+          torchParam.index_put_({i, j}, mlpackParams(mlpackParamItr++, 0));
+        }
+      }
+    }
+    else if (dimLen == 4)
+    {
+      for (int i = 0; i < torchParam.size(0); ++i)
+      {
+        for (int j = 0; j < torchParam.size(1); ++j)
+        {
+          for (int k = 0; k < torchParam.size(3); ++k)
+          {
+            for (int l = 0; l < torchParam.size(2); ++l)
+            {
+              torchParam.index_put_({i, j, l, k},
+                  mlpackParams(mlpackParamItr++, 0));
+            }
+          }
+        }
+      }
+    }
   }
 }
 
