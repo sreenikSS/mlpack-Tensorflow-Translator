@@ -14,3 +14,9 @@ mlpack_model_generator
 # ignore the precompiled headers created.
 *.gch
 *.tmp
+
+# Ignore .pt models as they are pretty large usually.
+# Code to generate them should be included along with instructions on
+# how to run.
+*.pt
+*.pth

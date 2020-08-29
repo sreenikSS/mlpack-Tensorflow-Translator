@@ -332,12 +332,12 @@ void paramTest()
 int main()
 {
     std::string inFile = "tests/mlpack_xml_models/mlpack_model.xml";
-    std::string outFile = "torch_conv_model.pt";
+    std::string outFile = "tests/pytorch_models/torch_conv_model.pt";
     FFN<> mlpackModel;
     data::Load(inFile, "mlpack_model", mlpackModel);
 
-    // # TODO : Running this function gives a segmentation fault currently.
-    //convertModel(inFile, outFile);
+    // # TODO : [IMPORTANT] Running this function gives a segmentation fault.
+    // convertModel(inFile, outFile);
 
     // testModel();
     // makeModel();
