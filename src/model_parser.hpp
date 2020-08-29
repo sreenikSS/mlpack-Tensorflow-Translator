@@ -282,13 +282,14 @@ boost::property_tree::ptree loadProperties(std::string& fileName,
                                            Dataset& dataset, double inSize);
 
 /** The final implementation of this file would not have a main method. This is
- * merely to ease testing. The following include statement can hence be
- * removed later
+ * merely to ease testing. The following include statement will be
+ * removed later.
 */
-
-
+// # TODO : Remove the testParser from final implementation.
 #include <mlpack/core/data/split_data.hpp>
 int testParser();
+
+// Include the implementation file.
 #include "model_parser_impl.hpp"
 
 #endif

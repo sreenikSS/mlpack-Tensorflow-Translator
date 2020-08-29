@@ -23,12 +23,14 @@ using namespace mlpack::ann;
  * Implementation of a class that returns the string representation of the
  * name of the given layer.
  */
-class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::string, double> >
+class LayerTypeVisitor :
+    public boost::static_visitor<std::unordered_map<std::string, double> >
 {
  public:
   //! Create the LayerNameVisitor object.
   LayerTypeVisitor()
   {
+    // Nothing to do here.
   }
 
 
@@ -38,7 +40,8 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
-  std::unordered_map<std::string, double> LayerString(AtrousConvolution<>* layer) const
+  std::unordered_map<std::string, double> LayerString(
+      AtrousConvolution<>* layer) const
   {
     std::unordered_map<std::string, double> values;
     values["insize"] = layer->InputSize();
@@ -64,7 +67,8 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
-  std::unordered_map<std::string, double> LayerString(AlphaDropout<>* layer) const
+  std::unordered_map<std::string, double> LayerString(
+      AlphaDropout<>* layer) const
   {
     std::unordered_map<std::string, double> values;
     values["ratio"] = layer->Ratio();
@@ -109,7 +113,8 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
-  std::unordered_map<std::string, double> LayerString(Convolution<>* layer) const
+  std::unordered_map<std::string, double> LayerString(
+      Convolution<>* layer) const
   {
     std::unordered_map<std::string, double> values;
     values["insize"] = layer->InputSize();
@@ -161,7 +166,8 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
-  std::unordered_map<std::string, double> LayerString(LinearNoBias<>* layer) const
+  std::unordered_map<std::string, double> LayerString(
+      LinearNoBias<>* layer) const
   {
     std::unordered_map<std::string, double> values;
     values["insize"] = layer->InputSize();
@@ -175,28 +181,8 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
-  std::unordered_map<std::string, double> LayerString(MaxPooling<>* layer) const
-  {
-    std::unordered_map<std::string, double> values;
-    values["insize"] = layer->InputSize();
-    values["outsize"] = layer->OutputSize();
-    values["kw"] = layer->KernelWidth();
-    values["kh"] = layer->KernelHeight();
-    values["dw"] = layer->StrideWidth();
-    values["dh"] = layer->StrideHeight();
-    values["floor"] = layer->Floor();
-    values["inputwidth"] = layer->InputWidth();
-    values["inputheight"] = layer->InputHeight();
-    return values;
-  }
-
-  /*
-   * Return the name of the given layer of type Linear as a map.
-   *
-   * @param Given layer of type Linear.
-   * @return The string representation of the layer.
-   */
-  std::unordered_map<std::string, double> LayerString(MeanPooling<>* layer) const
+  std::unordered_map<std::string, double> LayerString(
+      MaxPooling<>* layer) const
   {
     std::unordered_map<std::string, double> values;
     values["insize"] = layer->InputSize();
@@ -217,7 +203,30 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
-  std::unordered_map<std::string, double> LayerString(LeakyReLU<>* layer) const
+  std::unordered_map<std::string, double> LayerString(
+      MeanPooling<>* layer) const
+  {
+    std::unordered_map<std::string, double> values;
+    values["insize"] = layer->InputSize();
+    values["outsize"] = layer->OutputSize();
+    values["kw"] = layer->KernelWidth();
+    values["kh"] = layer->KernelHeight();
+    values["dw"] = layer->StrideWidth();
+    values["dh"] = layer->StrideHeight();
+    values["floor"] = layer->Floor();
+    values["inputwidth"] = layer->InputWidth();
+    values["inputheight"] = layer->InputHeight();
+    return values;
+  }
+
+  /*
+   * Return the name of the given layer of type Linear as a map.
+   *
+   * @param Given layer of type Linear.
+   * @return The string representation of the layer.
+   */
+  std::unordered_map<std::string, double> LayerString(
+      LeakyReLU<>* layer) const
   {
     std::unordered_map<std::string, double> values;
     values["alpha"] = layer->Alpha();
@@ -230,7 +239,8 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
    * @param Given layer of type Linear.
    * @return The string representation of the layer.
    */
-  std::unordered_map<std::string, double> LayerString(TransposedConvolution<>* layer) const
+  std::unordered_map<std::string, double> LayerString(
+      TransposedConvolution<>* layer) const
   {
     std::unordered_map<std::string, double> values;
     values["insize"] = layer->InputSize();
@@ -245,8 +255,6 @@ class LayerTypeVisitor : public boost::static_visitor<std::unordered_map<std::st
     values["padhb"] = layer->PadHBottom();
     values["inputwidth"] = layer->InputWidth();
     values["inputheight"] = layer->InputHeight();
-    //values["outputwidth"] = layer->OutputWidth();
-    //values["outputheight"] = layer->OutputHeight();
     return values;
   }
 

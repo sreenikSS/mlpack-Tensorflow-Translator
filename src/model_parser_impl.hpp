@@ -20,7 +20,10 @@
 using namespace mlpack;
 using namespace ann;
 
-Dataset::Dataset(){}
+Dataset::Dataset()
+{
+  // Nothing to do here.
+}
 
 Dataset::Dataset(arma::mat& trainX, arma::mat& trainY)
 {
@@ -135,28 +138,30 @@ void trainModel(OptimizerType optimizer, FFN<LossType, InitType> model,
   arma::mat validY = dataset.getValidY();
   for (int i = 1; i <= cycles; i++)
   {
+    /*
     // Uncomment and modify this part for solving a regression problem
 
-    // model.Train(trainX, trainY, optimizer);
-    // arma::mat predOut;
-    // model.Predict(trainX, predOut);
-    // predOut.transform([](double val) { return roundf(val);});
-    // double trainAccuracy = 0;
-    // for (int j=0; j < trainY.n_cols; j++)
-    // {
-    //     trainAccuracy += ( (int) predOut[j] == (int) trainY[j]);
-    // }
-    // trainAccuracy /= (double) trainY.n_cols;
-    // model.Predict(validX, predOut);
-    // predOut.transform([](double val) { return roundf(val);});
-    // double validAccuracy = 0;
-    // for (int j=0; j < validY.n_cols; j++)
-    // {
-    //     validAccuracy += ( (int) predOut[j] == (int) validY[j]);
-    // }
-    // validAccuracy /= (double) validY.n_cols;
-    // Log::Info << "Cycle: " << i << " Training accuracy: " << trainAccuracy <<
-    //     " Validation accuracy: " << validAccuracy << "\n";
+    model.Train(trainX, trainY, optimizer);
+    arma::mat predOut;
+    model.Predict(trainX, predOut);
+    predOut.transform([](double val) { return roundf(val);});
+    double trainAccuracy = 0;
+    for (int j=0; j < trainY.n_cols; j++)
+    {
+        trainAccuracy += ( (int) predOut[j] == (int) trainY[j]);
+    }
+    trainAccuracy /= (double) trainY.n_cols;
+    model.Predict(validX, predOut);
+    predOut.transform([](double val) { return roundf(val);});
+    double validAccuracy = 0;
+    for (int j=0; j < validY.n_cols; j++)
+    {
+        validAccuracy += ( (int) predOut[j] == (int) validY[j]);
+    }
+    validAccuracy /= (double) validY.n_cols;
+    Log::Info << "Cycle: " << i << " Training accuracy: " << trainAccuracy <<
+        " Validation accuracy: " << validAccuracy << "\n";
+    */
 
     // Train neural network. If this is the first iteration, weights are
     // random, using current values as starting point otherwise.
@@ -600,12 +605,14 @@ void getInitType(std::string& initType, std::string& lossType,
                                   lossParams, optimizerParams, layers,
                                   dataset);
   }
-  // else if (initType == "kathirvalavakumar_subavathi")
-  // {
-  //   getLossType<KathirvalavakumarSubavathiInitialization>(lossType,
-  //                                                        optimizerType,
-  //                                                        optimizerParams);
-  // }
+  /*
+  else if (initType == "kathirvalavakumar_subavathi")
+  {
+    getLossType<KathirvalavakumarSubavathiInitialization>(lossType,
+                                                         optimizerType,
+                                                         optimizerParams);
+  }
+  */
   else if (initType == "lecun_normal")
   {
     LecunNormalInitialization init;
@@ -662,6 +669,7 @@ void getInitType(std::string& initType, std::string& lossType,
   }
 }
 
+// Simple mapping of string padding types to double.
 std::string decodePadType(double val)
 {
   if (val==0)
