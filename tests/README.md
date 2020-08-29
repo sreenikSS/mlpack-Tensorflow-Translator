@@ -1,4 +1,6 @@
-# Running the model generator file
+# Test Cases
+
+## Running the model generator file
 
 ```mlpack_model_generator.cpp``` is a simple file which
 demonstrates how to create a XML file with initialized weights for a mlpack

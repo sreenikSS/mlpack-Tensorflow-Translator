@@ -28,7 +28,9 @@ to train neural networks.
 
 For the conversion process, the library currently has tested support for
 linear and convolutional layers. Further support can be added as and when
-more examples are available in the ```examples``` repository.
+more examples are available in the ```examples``` folder.
+
+For seeing examples of the library in work, check out the ```tests``` folder.
 
 ---
 
