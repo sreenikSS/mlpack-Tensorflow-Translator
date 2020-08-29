@@ -2,7 +2,7 @@
 // #include <torch/torch.h>
 #include <string>
 
-torch::nn::Sequential& makeModel()
+torch::nn::Sequential makeModel()
 {
   torch::nn::Sequential model;
   // model->push_back(torch::nn::Conv2d(torch::nn::Conv2dOptions(84, 4, 1).with_bias(false)));
@@ -199,6 +199,110 @@ void convTest()
   //       outSize, 1, false, false);
 }
 
+void convTest2()
+{
+  FFN<NegativeLogLikelihood<>, RandomInitialization> net;
+  net.Add<Convolution<>>(3, 4, 2, 3, 1, 1, 0, 0, 5, 6); // 4, 2
+
+  std::vector<LayerTypes<> > layers = net.Model();
+  std::vector<std::string> layerTypes;
+  for (LayerTypes<> layer : layers)
+  {
+    layerTypes.push_back(boost::apply_visitor(LayerNameVisitor(), layer));
+  }
+  torch::nn::Sequential torchModel = transferLayers(layerTypes, layers);
+
+  for (const auto& pair : torchModel->named_parameters())
+  {
+    std::cout << pair.key() << ": " << pair.value() << std::endl;
+  }
+  std::cout << "The end.\n";
+
+  for (auto& param : torchModel->parameters())
+  {
+    param.print();
+  }
+  std::cout << "\n\nmlpack params:\n";
+  net.ResetParameters();
+  net.Parameters().print();
+  std::cout << "Param len: " << net.Parameters().n_rows;
+
+
+  transferParameters(net.Parameters(), torchModel->parameters());
+  for (const auto& pair : torchModel->named_parameters())
+  {
+    std::cout << pair.key() << ": " << pair.value() << std::endl;
+  }
+
+  arma::cube weight = arma::cube(net.Parameters().memptr(), 3, 2,
+        12, false, false);
+  weight.print();
+
+  // arma::mat inputs = arma::ones(6, 5);
+  // // inputs.print();
+  // arma::mat predOut1;
+  // net.Predict(inputs, predOut1);
+  // std::cout << "Pred out for mlpack model:\n";
+  // predOut1.print();
+  // std::cout << "Pred out for torch model:\n";
+  // auto predOut2 = torchModel->forward(torch::ones({1, 1, 5, 6}));
+  // std::cout << predOut2 << '\n';
+}
+
+void allTest()
+{
+  FFN<NegativeLogLikelihood<>, RandomInitialization> net;
+  net.Add<Convolution<>>(3, 4, 3, 3, 1, 1, 0, 0, 8, 8); // 4, 2
+  net.Add<LeakyReLU<>>();
+  net.Add<MaxPooling<>>(2, 2, 2, 2, true);
+  net.Add<Linear<>>(4 * 3 * 3, 2);
+  net.Add<LogSoftMax<>>();
+
+  std::vector<LayerTypes<> > layers = net.Model();
+  std::vector<std::string> layerTypes;
+  for (LayerTypes<> layer : layers)
+  {
+    layerTypes.push_back(boost::apply_visitor(LayerNameVisitor(), layer));
+  }
+  torch::nn::Sequential torchModel = transferLayers(layerTypes, layers);
+
+  for (const auto& pair : torchModel->named_parameters())
+  {
+    std::cout << pair.key() << ": " << pair.value() << std::endl;
+  }
+  std::cout << "The end.\n";
+
+  for (auto& param : torchModel->parameters())
+  {
+    param.print();
+  }
+  std::cout << "\n\nmlpack params:\n";
+  net.ResetParameters();
+  net.Parameters().print();
+  std::cout << "Param len: " << net.Parameters().n_rows;
+
+
+  transferParameters(net.Parameters(), torchModel->parameters());
+  for (const auto& pair : torchModel->named_parameters())
+  {
+    std::cout << pair.key() << ": " << pair.value() << std::endl;
+  }
+
+  // arma::cube weight = arma::cube(net.Parameters().memptr(), 3, 2,
+  //       12, false, false);
+  // weight.print();
+
+  // arma::mat inputs = arma::ones(6, 5);
+  // // inputs.print();
+  // arma::mat predOut1;
+  // net.Predict(inputs, predOut1);
+  // std::cout << "Pred out for mlpack model:\n";
+  // predOut1.print();
+  // std::cout << "Pred out for torch model:\n";
+  // auto predOut2 = torchModel->forward(torch::ones({1, 1, 5, 6}));
+  // std::cout << predOut2 << '\n';
+}
+
 void paramTest()
 {
   FFN<NegativeLogLikelihood<>, RandomInitialization> net;
@@ -227,19 +331,21 @@ void paramTest()
 
 int main()
 {
-    std::string inFile = "tests/mlpack_model.xml";
-    std::string outFile = "torch_linear_model.pt";
+    std::string inFile = "tests/mlpack_xml_models/mlpack_model.xml";
+    std::string outFile = "torch_conv_model.pt";
     FFN<> mlpackModel;
     data::Load(inFile, "mlpack_model", mlpackModel);
-    // convertModel(inFile, outFile);
+
+    // # TODO : Running this function gives a segmentation fault currently.
+    //convertModel(inFile, outFile);
+
     // testModel();
     // makeModel();
-
     // finalTest(2);
     // cout << "\n\n\n";
     // finalTest(1);
-
     // paramTest();
-
-    convTest();
+    // convTest();
+    // convTest2();
+    allTest();
 }
