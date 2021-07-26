@@ -1,0 +1,22 @@
+# Ignore IDE specific files.
+.ipynb_checkpoints
+.vscode
+.DS_Store
+.markdownlint.json
+
+# Ignore output files produced from tests.
+onnx_to_mlpack_test
+mlpack_to_torch_test
+mlpack_to_torch_test_output.txt
+mlpack_model_generator
+
+# If someone tries to compile the header files in src,
+# ignore the precompiled headers created.
+*.gch
+*.tmp
+
+# Ignore .pt models as they are pretty large usually.
+# Code to generate them should be included along with instructions on
+# how to run.
+*.pt
+*.pth
